@@ -555,6 +555,10 @@
     </div>
 
     <script>
+        // Alert btn -----------------------------------------------
+
+
+        // Alert btn -----------------------------------------------
         document.addEventListener('DOMContentLoaded', function() {
             const emergencyButton = document.getElementById('emergencyButton');
             const locationStatus = document.getElementById('locationStatus');
@@ -562,8 +566,32 @@
             const locationMap = document.getElementById('locationMap');
             
             let locationActive = false;
-            
+            let setLocation = null
             emergencyButton.addEventListener('click', function() {
+                
+                navigator.geolocation.getCurrentPosition(  function(p){
+                    
+                    let lat = p.coords.latitude
+                    let lon = p.coords.longitude
+                    
+
+                    GetRegon(lat , lon)
+                } ,  )
+
+                    
+                async function GetRegon(lat , lon ) {
+                    let Respons = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}`)
+                      
+                    if(Respons.ok){
+                    let data = await Respons.json()
+                        console.log(data.address);
+                        setLocation = data.address
+                    }
+                }
+
+                
+
+                
                 if (!locationActive) {
                     // Activate location sharing
                     locationActive = true;
@@ -578,7 +606,7 @@
                     emergencyButton.style.animation = 'none';
                     
                     // Show alert
-                    alert('EMERGENCY ALERT ACTIVATED!\n\nYour location is now being shared with emergency services and your family members.\n\nHelp is on the way.');
+                    // alert('EMERGENCY ALERT ACTIVATED!\n\nYour location is now being shared with emergency services and your family members.\n\nHelp is on the way.');
                 } else {
                     // Deactivate location sharing
                     locationActive = false;
@@ -598,9 +626,10 @@
             function simulateLocationDetection() {
                 // Simulate getting user's location
                 const addresses = [
-                    '123 Main Street, Downtown, New York, NY 10001',
-                    '456 Oak Avenue, Central District, Los Angeles, CA 90001',
-                    '789 Pine Road, Business District, Chicago, IL 60601'
+                    setLocation.city,
+                    setLocation.road,
+                    setLocation.postcode,
+                    
                 ];
                 
                 // Pick a random address for simulation
